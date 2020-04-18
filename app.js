@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const path = require("path")
 //const expressValidator = require("express-validator");
 require("dotenv").config();
 
@@ -16,7 +17,7 @@ const app = express();
 
 //db
 mongoose
-    .connect(process.env.MONGODB_URI, {
+    .connect('mongodb+srv://nandita:nandita@cluster0-i9csd.mongodb.net/ideotic_task?retryWrites=true&w=majority', {
         useNewUrlParser: true,
         useCreateIndex: true,
         useUnifiedTopology: true,
@@ -37,6 +38,14 @@ app.use("/api", authRoutes);
 app.use("/api", postRoutes);
 
 const port = process.env.PORT;
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static( 'client/build' ));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html')); // relative path
+    });
+}
 
 app.listen(port, () => {
     console.log(`Listening to ${port}`);

@@ -3,6 +3,8 @@ const { errorHandler } = require("../helpers/dbErrorHandler");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 
+const JWT_SECRET = 'jdfjhdsuvnjdsfnckhd'
+
 exports.userById = (req, res, next, id) => {
     User.findById(id).exec((err, user) => {
         if (err || !user) {
@@ -52,7 +54,7 @@ exports.signin = (req, res) => {
         }
 
         //generate a signed token with user id and secret
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET);
 
         //persist the token as 't' in cookie with expiry date
         res.cookie("t", token, { expire: new Date() + 9999 });
@@ -69,7 +71,7 @@ exports.signout = (req, res) => {
 };
 
 exports.requireSignin = expressJwt({
-    secret: process.env.JWT_SECRET,
+    secret: JWT_SECRET,
     userProperty: "auth",
 });
 
