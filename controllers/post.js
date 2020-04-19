@@ -21,9 +21,52 @@ exports.read = (req, res) => {
     return res.json(req.post);
 };
 
+exports.makePost = (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true;
+    form.parse(req, (err, fields, files) => {
+        if (err)
+            return res.status(400).json({
+                error: "Image could not be uploaded",
+            });
+        let post = new Post(fields);
+
+        //1kb - 1000
+        //1mb - 1000000
+
+        const { title, description, author } = fields;
+
+        if (!title || !description || !author) {
+            return res.status(400).json({
+                error: "All fields are required",
+            });
+        }
+
+        if (files.photo) {
+            if (files.photo.size > 1000000)
+                return res.status(400).json({
+                    error: "Image should be less than 1 MB",
+                });
+            post.photo.data = fs.readFileSync(files.photo.path);
+            post.photo.contentType = files.photo.type;
+        }
+
+        post.save((err, result) => {
+            if (err)
+                return res.status(400).json({
+                    error: errorHandler(err),
+                });
+            return res.json(result);
+        });
+    });
+        
+    //return res.json({hi: "hi"})
+}
+
 exports.create = (req, res) => {
 	console.log(req.body)
-    let form = new formidable.IncomingForm();
+    //let form = new formidable.IncomingForm();
+    /*
     form.keepExtensions = true;
     form.parse(req, (err, fields, files) => {
         if (err)
@@ -59,7 +102,8 @@ exports.create = (req, res) => {
                 });
             res.json(result);
         });
-    });
+    });*/
+    res.json({hi:"hi"})
 };
 
 exports.remove = (req, res) => {
@@ -103,13 +147,20 @@ exports.photo = (req, res, next) => {
 exports.like = (req, res) =>{
     let post = req.post;
     post.likes += 1;
+    let user = req.profile;
+    user.likedPosts.push(post._id);
     //post.photo = undefined;
     post.save((err, result) => {
         if (err)
             return res.status(400).json({
                 error: errorHandler(err),
             });
-        result.photo = undefined
-        res.json(result);
+        user.save((err, result) => {
+            if (err)
+            return res.status(400).json({
+                error: errorHandler(err),
+            });
+            res.json(result)
+        })
     })
 }

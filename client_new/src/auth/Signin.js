@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import * as actions from '../store/actions/index'
 import { Redirect } from "react-router-dom";
 import Menu from "../core/Menu";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import classes from './auth.module.css'
 
 class Signin extends Component {
     state = {
@@ -26,33 +25,27 @@ class Signin extends Component {
         this.props.onAuth( this.state.email, this.state.password)
     }
 
-    signupForm = () => (
-        <Form>
-          <Form.Group controlId="formBasicEmail">
-          </Form.Group>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
+    signupform = () => (
+        <form className={classes.container}>
+            <label>Email address</label>
+            <input
               onChange={(event) => this.inputChangeHandler(event, "email")}
               type="email"
               placeholder="Enter email"
               value={this.state.email}
             />
-          </Form.Group>
     
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
+            <label>Password</label>
+            <input
               onChange={(event) => this.inputChangeHandler(event, "password")}
               type="password"
               placeholder="Password"
               value={this.state.password}
             />
-          </Form.Group>
-          <Button onClick={(event) => this.clickSubmit(event)} variant="primary" type="submit">
+          <button onClick={(event) => this.clickSubmit(event)} type="submit">
             Submit
-          </Button>
-        </Form>)
+          </button>
+        </form>)
 
 showError = () => (
     <div
@@ -83,7 +76,7 @@ showError = () => (
                 {this.showLoading()}
                 {this.showError()}
                 {this.showSuccess()}
-                {this.signupForm()}
+                {this.signupform()}
             </div>
             
         )
@@ -93,7 +86,7 @@ showError = () => (
 const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
-        success: state.auth.successSignin,
+        success: state.auth.success,
         error: state.auth.error 
     }
 }

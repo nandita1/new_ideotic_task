@@ -1,14 +1,51 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
   }
   
+  @media (min-width: 768px) {
+    .container {
+      width: 750px;
+    }
+  }
+  
+  @media (min-width: 992px) {
+    .container {
+      width: 970px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .container {
+      width: 1170px;
+    }
+  }
 
 .article {
     color: #56585b;
     background-color: #fff;
-    font-family: "Lora", serif;
+    font-family: "Lora", serif, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     margin-bottom: 20px;
   }
@@ -17,7 +54,28 @@
     font-size: 16px;
     margin: 0 auto 30px;
   }
-  
+  .btn {
+    display: block;
+    color: white;
+    text-align: center;
+    background-color: #e53935;
+    text-decoration: none;
+    border:none;
+    padding: 10px 15px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5%;
+    cursor: pointer;
+}
+
+.btn.disabled {
+  background-color: #666;
+}
+
+.btn:hover {
+    background-color: #b71c1c
+}
+
   .article .intro h1 {
     font-size: 32px;
     margin-bottom: 15px;

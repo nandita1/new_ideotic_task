@@ -3,11 +3,13 @@ import Menu from './Menu';
 import {API} from '../config'
 import classes from './Post.module.css'
 import {connect} from 'react-redux'
+import * as actions from '../store/actions/index'
  
 class Post extends Component {
     state = {
         post: {},
-        error: false
+        error: false,
+        disabled: false
     }
 
 
@@ -21,10 +23,17 @@ class Post extends Component {
               return response.json()
             })
             .then((response) => {
-                
+                let disabled = false
                 console.log(response)
-                this.setState({...this.state, post: {...this.state.post, _id: response._id, title: response.title, description: response.description, createdAt: response.createdAt, author: response.author.name, likes: response.likes}, error: false})
-                //console.log(this.state.post)
+                for( let i in this.props.likedPosts){
+                    //console.log(likedPost)
+                    console.log(response._id)
+                    console.log(this.props.likedPosts[i])
+                    if(this.props.likedPosts[i] == response._id)
+                        disabled = true
+                }
+                this.setState({...this.state, disabled: disabled,post: {...this.state.post, _id: response._id, title: response.title, description: response.description, createdAt: response.createdAt, author: response.author.name, likes: response.likes}, error: false})
+
             })
             .catch((err) => {
                 this.setState({...this.state, error: err})
@@ -44,16 +53,17 @@ class Post extends Component {
           .then(response => {
               console.log(response)
               const newLikes = this.state.post.likes + 1
-              this.setState({...this.state, post: {...this.state.post, likes: newLikes}})
-              response.json()
+              this.props.likePost(postId)
+              this.setState({...this.state, disabled: true, post: {...this.state.post, likes: newLikes}})
+              console.log(this.state)
             })
           .catch(err => console.log(err))
     }
 
     showLikeButton = () => {
-        if(this.props.token === null)
-            return <button disabled type="button" className="btn btn-secondary" style={{pointerEvents: 'none'}}>Like</button>
-        return <button type="button" className="btn btn-danger" onClick={() => this.incrementLike()}>Like</button>
+        if(this.props.token === null || this.state.disabled)
+            return <button disabled type="button" className={[classes.btn, classes.disabled].join(" ")} style={{pointerEvents: 'none'}}>Like</button>
+        return <button type="button" className={classes.btn} onClick={() => this.incrementLike()}>Like</button>
     }
 
     render(){
@@ -61,19 +71,19 @@ class Post extends Component {
             <div>
                 <Menu></Menu>
                 <div className={classes.article}>
-                    <div className="container">
+                    <div className={classes.container}>
                             <div className="row">
                                 <div className="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
                                     <div className={classes.intro}>
-                                        <h1 className="text-center">{this.state.post.title}</h1>
-                                        <p className="text-center"><span className={classes.by}>- by {this.state.post.author}</span></p>
-                                        <p className="text-center"><span className={classes.date}>{this.state.post.createdAt} </span></p>
-                                        <img className="img-fluid" src={`${API}/posts/photo/${this.state.post._id}`}/></div>
-                                        <p className="text-center">
+                                        <h1 style={{textAlign: 'center'}}>{this.state.post.title}</h1>
+                                        <p style={{textAlign: 'center'}}><span className={classes.by}>- by {this.state.post.author}</span></p>
+                                        <p style={{textAlign: 'center'}}><span className={classes.date}>{this.state.post.createdAt} </span></p>
+                                        <img style={{width: '100%', height: 'auto'}} src={`${API}/posts/photo/${this.state.post._id}`}/></div>
+                                        <p style={{textAlign: 'center'}}>
                                             <span><i className='fas fa-heart' style={{color: 'red'}}></i> {this.state.post.likes} Likes</span>
                         
                                         </p>
-        <p className="text-center">{this.showLikeButton()}</p>
+                                        <p style={{textAlign: 'center'}}>{this.showLikeButton()}</p>
                                     <div className={classes.text} dangerouslySetInnerHTML={{__html:this.state.post.description}}></div>
                                         </div>
                                         </div>
@@ -86,11 +96,18 @@ class Post extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapDispatchToProps = dispatch => {
     return {
-        token: state.auth.token,
-        userId: state.auth.id
+        likePost: (postId) => dispatch(actions.likePost(postId))
     }
 }
 
-export default connect(mapStateToProps)(Post)
+const mapStateToProps = state => {
+    return {
+        token: state.auth.token,
+        userId: state.auth.id,
+        likedPosts: state.auth.likedPosts
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Post)

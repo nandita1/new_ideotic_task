@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import * as actions from '../store/actions/index'
-import { Link } from "react-router-dom";
+import { Link,Redirect } from "react-router-dom";
 import Menu from "../core/Menu";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import classes from './auth.module.css'
+
 
 class Auth extends Component {
     state = {
@@ -28,62 +28,67 @@ class Auth extends Component {
     }
 
     signupForm = () => (
-        <Form>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
+        
+        <form className={classes.container}>
+          <label>Name</label>
+            <input
               onChange={(event) => this.inputChangeHandler(event, "name")}
               type="text"
               placeholder="Enter Name"
               value={this.state.name}
             />
-          </Form.Group>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              onChange={(event) => this.inputChangeHandler(event, "email")}
-              type="email"
-              placeholder="Enter email"
-              value={this.state.email}
-            />
-          </Form.Group>
-    
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              onChange={(event) => this.inputChangeHandler(event, "password")}
-              type="password"
-              placeholder="Password"
-              value={this.state.password}
-            />
-          </Form.Group>
-          <Button onClick={this.clickSubmit} variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>)
+        <label>Email address</label>
+        <input
+          onChange={(event) => this.inputChangeHandler(event, "email")}
+          type="email"
+          placeholder="Enter email"
+          value={this.state.email}
+        />
 
-showError = () => (
-    <div
-      className="alert alert-danger"
-      style={{ display: this.props.error ? "" : "none" }}
-    >
-      {this.props.error}
-    </div>
-  );
- showSuccess = () => (
-    <div
-      className="alert alert-info"
-      style={{ display: this.props.success ? "" : "none" }}
-    >
-      New account is created. Please <Link to="/signin">Signin</Link>
-    </div>
-  );
+        <label>Password</label>
+        <input
+          onChange={(event) => this.inputChangeHandler(event, "password")}
+          type="password"
+          placeholder="Password"
+          value={this.state.password}
+        />
+      <button onClick={(event) => this.clickSubmit(event)} type="submit">
+        Submit
+      </button>
+    </form>
+        
+        )
+
+
+        showError = () => (
+          <div
+            className="alert alert-danger"
+            style={{ display: this.props.error ? "" : "none" }}
+          >
+            {this.props.error}
+          </div>
+        );
+      
+        showSuccess = () => {
+          if(this.props.success){
+            return <Redirect to="/"></Redirect>
+          }
+        }
+        
+      
+        showLoading = () =>
+        this.props.loading && (
+          <div className="alert alert-info">
+            <h2>Loading...</h2>
+          </div>
+        );
 
 
     render(){
         return(
             <div>
                 <Menu></Menu>
+                {this.showLoading()}
                 {this.showError()}
                 {this.showSuccess()}
                 {this.signupForm()}
@@ -95,7 +100,8 @@ showError = () => (
 
 const mapStateToProps = state => {
     return {
-        success: state.auth.successSignup,
+      loading: state.auth.loading,
+        success: state.auth.success,
         error: state.auth.error
     }
 }

@@ -7,19 +7,15 @@ export const authStart = () => {
     }
 }
 
-export const authSignupSuccess = () => {
-    return {
-        type: actionTypes.AUTH_SIGNUP_SUCCESS
-    }
-}
 
-export const authSigninSuccess = (token, id, name) => {
+export const authSigninSuccess = (token, id, name, likedPosts) => {
   //console.log(response)
   return {
       type: actionTypes.AUTH_SIGNIN_SUCCESS,
       token: token,
       id: id,
-      name: name
+      name: name,
+      likedPosts: likedPosts
   }
 }
 
@@ -33,6 +29,13 @@ export const authFail = (error) => {
 export const authLogout = () => {
   return {
     type: actionTypes.AUTH_SIGNOUT
+  }
+}
+
+export const likePost = (postId) => {
+  return {
+    type: actionTypes.LIKE_POST,
+    postId: postId
   }
 }
 
@@ -52,24 +55,24 @@ export const authSignup = (name, email, password) => {
             },
             body: JSON.stringify(authData),
           })
-            .then((response) => {
+          .then((response) => {
+            //console.log(response);
+            return response.json();
+          })
+          .then((response)=>{
               console.log(response);
-              return response.json();
-            })
-            .then((response)=>{
-                if(response.error)
+
+              //localStorage.setItem("token", JSON.stringify(response.token));
+               if(response.error)
                   dispatch(authFail(response.error))
                 else{
-                    //localStorage.setItem("token", response.token);
-                    dispatch(authSignupSuccess())
-                  
+              dispatch(authSigninSuccess(response.token, response.user._id, response.user.name, response.user.likedPosts))
                 }
-                
-            })
-            .catch((err) => {
-              console.log(err);
-              dispatch(authFail(err))
-            });
+          })
+          .catch((err) => {
+            console.log(err);
+            dispatch(authFail(err))
+          });
     }
 }
 
@@ -100,7 +103,7 @@ export const authSignin = (email, password) => {
                if(response.error)
                   dispatch(authFail(response.error))
                 else{
-              dispatch(authSigninSuccess(response.token, response.user._id, response.user.name))
+              dispatch(authSigninSuccess(response.token, response.user._id, response.user.name, response.user.likedPosts))
                 }
           })
           .catch((err) => {

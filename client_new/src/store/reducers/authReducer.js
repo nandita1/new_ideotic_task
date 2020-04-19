@@ -4,10 +4,10 @@ const initialState = {
     token: null,
     id: null,
     name: null,
-    successSignup: false,
-	successSignin: false,
+    success: false,
     error: false,
     loading: false,
+    likedPosts: []
 }
 
 const authReducer = (state = initialState, action) => {
@@ -17,35 +17,26 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 loading: true,
                 error: false,
-                successSignup: false,
-				successSignin: false,
+                success: false,
             } 
-        case actionTypes.AUTH_SIGNUP_SUCCESS:
-            return {
-                    ...state,
-                    loading: false,
-                    error: false,
-					successSignup: true,
-					successSignin: false,
-                } 
         case actionTypes.AUTH_FAIL:
             return {
                  ...state,
                 loading: false,
                 error: action.error,
-				successSignup: false,
-				successSignin: false,
+				success: false,
             } 
         case actionTypes.AUTH_SIGNIN_SUCCESS:
+
             return {
                 ...state,
                 token: action.token,
                 id: action.id,
                 name: action.name,
-                successSignup: false,
-				successSignin: true,
+                success: true,
                 loading: false,
-                error: false
+                error: false,
+                likedPosts: [...action.likedPosts]
             }
         case actionTypes.AUTH_SIGNOUT:
             return{
@@ -54,9 +45,13 @@ const authReducer = (state = initialState, action) => {
                 id: null,
                 name: null,
                 error: false,
-                successSignup: false,
-				successSignin: false,
+                success: false,
                 loading: false
+            }
+        case actionTypes.LIKE_POST:
+            return {
+                ...state,
+                likedPosts: [...state.likedPosts, action.postId]
             }
         default: return state;
     }
