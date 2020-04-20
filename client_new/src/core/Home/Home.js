@@ -1,18 +1,16 @@
 import React from "react";
-import Menu from './Menu';
-import { API } from "../config";
-import Posts from './Posts'
+import Menu from '../Menu/Menu';
+import { API } from "../../config";
+import Posts from '../Posts/Posts'
 import {Link} from 'react-router-dom'
 import classes from './Home.module.css'
 const Home = () => (
   <div>
     <Menu></Menu>
     <div className={classes.jumbotron}>
-      <div className={classes.container}>
-      <h1>Geek Blogs</h1>
+      <h2>Geek Blogs</h2>
       <p className={classes.lead}>Welcome to the Geek World</p>
-      <Link to="/create/post" className={classes.btn}>Create Post</Link>
-      </div>   
+      <Link to="/create/post" className={classes.btn}>Create Post</Link> 
     </div>
     <div>
       <Posts></Posts>

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Link} from 'react-router-dom'
-import {API} from '../config'
+import {API} from '../../config'
 import classes from './Posts.module.css'
 
-import * as actions from '../store/actions/index'
+import * as actions from '../../store/actions/index'
 
 class Posts extends Component {
 
@@ -21,10 +21,17 @@ class Posts extends Component {
                     <div className={classes.image}>
                       <img src={`${API}/posts/photo/${post._id}`} alt="..."/>
                     </div>
+                    <div className={classes.content}>
+                      <div className={classes.contentBody}>
                       <h5 className="card-title">{post.title}</h5>
                     <p className="card-text"><small className="text-muted">{post.createdAt}</small></p>
                     
                     <Link to={`/post/${post._id}`} className={classes.btn}>Read More</Link>
+                      </div>
+    
+                    
+                    </div>
+                      
                     </div>
                   </div>
                 

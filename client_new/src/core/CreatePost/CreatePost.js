@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
-import Menu from './Menu'
+import Menu from '../Menu/Menu'
 import { EditorState, convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import { Editor } from 'react-draft-wysiwyg';
-import '../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import {connect } from 'react-redux'
-import {API} from '../config'
+import {API} from '../../config'
 import {Redirect} from 'react-router-dom'
 import classes from './createpost.module.css'
 

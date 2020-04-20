@@ -1,12 +1,12 @@
 import React from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
-import Home from './core/Home';
+import Home from './core/Home/Home';
 import Signup from './auth/Signup'
 import Signin from './auth/Signin'
 import Signout from './auth/Signout'
-import Post from './core/Post'
+import Post from './core/Post/Post'
 import PrivateRoute from './auth/PrivateRoute'
-import CreatePost from './core/CreatePost'
+import CreatePost from './core/CreatePost/CreatePost'
 
 const Routes = () => {
 

@@ -1,19 +1,22 @@
 import React, {Component} from 'react';
-import Menu from './Menu';
-import {API} from '../config'
+import Menu from '../Menu/Menu';
+import {API} from '../../config'
 import classes from './Post.module.css'
 import {connect} from 'react-redux'
-import * as actions from '../store/actions/index'
+import * as actions from '../../store/actions/index'
+import Spinner from '../Spinner/Spinner'
  
 class Post extends Component {
     state = {
         post: {},
         error: false,
-        disabled: false
+        disabled: false,
+        loading: false
     }
 
 
     componentDidMount(){
+        this.setState({...this.state, loading: true})
         const postId = this.props.match.params.postId;
         fetch(`${API}/post/${postId}`,{
             method: "GET",
@@ -32,7 +35,7 @@ class Post extends Component {
                     if(this.props.likedPosts[i] == response._id)
                         disabled = true
                 }
-                this.setState({...this.state, disabled: disabled,post: {...this.state.post, _id: response._id, title: response.title, description: response.description, createdAt: response.createdAt, author: response.author.name, likes: response.likes}, error: false})
+                this.setState({...this.state, loading: false, disabled: disabled,post: {...this.state.post, _id: response._id, title: response.title, description: response.description, createdAt: response.createdAt, author: response.author.name, likes: response.likes}, error: false})
 
             })
             .catch((err) => {
@@ -67,29 +70,32 @@ class Post extends Component {
     }
 
     render(){
+        let content  = (<div className={classes.article}>
+            <div className={classes.container}>
+                    <div className="row">
+                        <div className="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
+                            <div className={classes.intro}>
+                                <h1 style={{textAlign: 'center'}}>{this.state.post.title}</h1>
+                                <p style={{textAlign: 'center'}}><span className={classes.by}>- by {this.state.post.author}</span></p>
+                                <p style={{textAlign: 'center'}}><span className={classes.date}>{this.state.post.createdAt} </span></p>
+                                <img style={{width: '100%', height: 'auto'}} src={`${API}/posts/photo/${this.state.post._id}`}/></div>
+                                <p style={{textAlign: 'center'}}>
+                                    <span><i className='fas fa-heart' style={{color: 'red'}}></i> {this.state.post.likes} Likes</span>
+                
+                                </p>
+                                <p style={{textAlign: 'center'}}>{this.showLikeButton()}</p>
+                            <div className={classes.text} dangerouslySetInnerHTML={{__html:this.state.post.description}}></div>
+                                </div>
+                                </div>
+                            </div>
+                
+                        </div>)
+        if(this.state.loading)
+            content= <Spinner></Spinner>
         return (
             <div>
                 <Menu></Menu>
-                <div className={classes.article}>
-                    <div className={classes.container}>
-                            <div className="row">
-                                <div className="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
-                                    <div className={classes.intro}>
-                                        <h1 style={{textAlign: 'center'}}>{this.state.post.title}</h1>
-                                        <p style={{textAlign: 'center'}}><span className={classes.by}>- by {this.state.post.author}</span></p>
-                                        <p style={{textAlign: 'center'}}><span className={classes.date}>{this.state.post.createdAt} </span></p>
-                                        <img style={{width: '100%', height: 'auto'}} src={`${API}/posts/photo/${this.state.post._id}`}/></div>
-                                        <p style={{textAlign: 'center'}}>
-                                            <span><i className='fas fa-heart' style={{color: 'red'}}></i> {this.state.post.likes} Likes</span>
-                        
-                                        </p>
-                                        <p style={{textAlign: 'center'}}>{this.showLikeButton()}</p>
-                                    <div className={classes.text} dangerouslySetInnerHTML={{__html:this.state.post.description}}></div>
-                                        </div>
-                                        </div>
-                                    </div>
-                        
-                                </div>
+                {content}
             </div>
             
         )

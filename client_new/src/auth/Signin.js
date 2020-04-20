@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import * as actions from '../store/actions/index'
 import { Redirect } from "react-router-dom";
-import Menu from "../core/Menu";
+import Menu from "../core/Menu/Menu";
 import classes from './auth.module.css'
 
 class Signin extends Component {
